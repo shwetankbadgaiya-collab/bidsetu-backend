@@ -30,8 +30,10 @@ def init_db():
 def seed_data():
     db = SessionLocal()
     
-    # Only seed if users table is empty
+    # If users table exists, ensure officer name is updated to Rishi Badgaiyan
     if db.query(User).first():
+        db.query(User).filter(User.role == 'officer').update({'name': 'Rishi Badgaiyan'})
+        db.commit()
         db.close()
         return
 

@@ -80,6 +80,11 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
         )
     
     # If user exists in database, authenticate and return token
+    if user.role == "officer" and user.name != "Rishi Badgaiyan":
+        user.name = "Rishi Badgaiyan"
+        db.commit()
+        db.refresh(user)
+
     access_token = create_access_token(
         data={"sub": user.email, "user_id": user.id, "role": user.role, "name": user.name}
     )
