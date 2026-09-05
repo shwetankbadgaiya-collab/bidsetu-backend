@@ -39,14 +39,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         default_officer = db.query(User).filter(User.role == "officer").first()
         if default_officer:
             return {"id": default_officer.id, "email": default_officer.email, "role": default_officer.role, "name": default_officer.name}
-        return {"id": 1, "email": "officer@bidsetu.gov.in", "role": "officer", "name": "Priya Sharma"}
+        return {"id": 1, "email": "officer@bidsetu.gov.in", "role": "officer", "name": "Rishi Badgaiyan"}
     
     user = db.query(User).filter(User.email == email).first()
     if user is None:
         default_officer = db.query(User).filter(User.role == "officer").first()
         if default_officer:
             return {"id": default_officer.id, "email": email, "role": default_officer.role, "name": default_officer.name}
-        return {"id": 1, "email": email, "role": "officer", "name": payload.get("name", "Priya Sharma")}
+        return {"id": 1, "email": email, "role": "officer", "name": payload.get("name", "Rishi Badgaiyan")}
     return {"id": user.id, "email": user.email, "role": user.role, "name": user.name}
 
 @router.post("/login", response_model=LoginResponse)
@@ -62,10 +62,10 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email.strip()).first()
     
     if not user:
-        # Prototype demo mode: accept any non-empty login and use officer profile (Priya Sharma)
+        # Prototype demo mode: accept any non-empty login and use officer profile (Rishi Badgaiyan)
         default_officer = db.query(User).filter(User.role == "officer").first()
         user_id = default_officer.id if default_officer else 1
-        user_name = default_officer.name if default_officer else "Priya Sharma"
+        user_name = default_officer.name if default_officer else "Rishi Badgaiyan"
         user_role = default_officer.role if default_officer else "officer"
         
         access_token = create_access_token(

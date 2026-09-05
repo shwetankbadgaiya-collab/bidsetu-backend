@@ -36,7 +36,7 @@ def seed_data():
         return
 
     # Seed Users
-    officer = User(name='Priya Sharma', email='officer@bidsetu.gov.in', password_hash=get_password_hash('demo1234'), role='officer')
+    officer = User(name='Rishi Badgaiyan', email='officer@bidsetu.gov.in', password_hash=get_password_hash('demo1234'), role='officer')
     admin = User(name='Rajesh Kumar', email='admin@bidsetu.gov.in', password_hash=get_password_hash('admin1234'), role='admin')
     db.add_all([officer, admin])
     db.commit()
