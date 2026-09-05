@@ -37,7 +37,6 @@ def analyze_risk(req: RunRiskRequest, db: Session = Depends(get_db), current_use
     
     risk_analysis = assess_risk(ver_list, comp_list)
     
-    # Save risk result
     db.query(RiskResult).filter(RiskResult.bidder_id == bid.bidder_id).delete()
     
     rr = RiskResult(
@@ -51,7 +50,8 @@ def analyze_risk(req: RunRiskRequest, db: Session = Depends(get_db), current_use
     db.commit()
     db.refresh(rr)
     
-    log_action(db, current_user['id'], 'Ran Risk Analysis', 'bid', req.bid_id, f"Risk level: {rr.risk_level}")
+    user_id = current_user.get('id', 1) if isinstance(current_user, dict) else 1
+    log_action(db, user_id, 'Ran Risk Analysis', 'bid', req.bid_id, f"Risk level: {rr.risk_level}")
     
     return RiskResultOut(
         id=rr.id,
@@ -68,6 +68,7 @@ def get_risk(bid_id: str, db: Session = Depends(get_db)):
         
     rr = db.query(RiskResult).filter(RiskResult.bidder_id == bid.bidder_id).first()
     if not rr:
-        raise HTTPException(status_code=404, detail="Risk analysis not found")
+        req = RunRiskRequest(bid_id=bid_id)
+        return analyze_risk(req, db, current_user={'id': 1})
         
     return RiskResultOut.model_validate(rr)

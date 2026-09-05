@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Union
 import json as _json
 
 class LoginRequest(BaseModel):
@@ -20,6 +20,7 @@ class LoginResponse(BaseModel):
     user: UserOut
 
 class TenderCreate(BaseModel):
+    tender_id: Optional[str] = None
     title: str
     department: str
     requirements: dict
@@ -37,8 +38,16 @@ class TenderOut(BaseModel):
     @classmethod
     def parse_requirements(cls, v):
         if isinstance(v, str):
-            return _json.loads(v)
-        return v
+            try:
+                return _json.loads(v)
+            except Exception:
+                return {}
+        return v or {}
+
+class BidCreate(BaseModel):
+    bidder_id: Optional[int] = 1
+    tender_id: Union[int, str]
+    bid_id: Optional[str] = None
 
 class BidOut(BaseModel):
     id: int
@@ -51,6 +60,8 @@ class BidOut(BaseModel):
     created_at: datetime
     bidder_name: str = ''
     company_name: str = ''
+    tender_code: str = ''
+    tender_title: str = ''
     model_config = ConfigDict(from_attributes=True)
 
 class DocumentOut(BaseModel):
@@ -99,7 +110,7 @@ class ComplianceResultOut(BaseModel):
 class ComplianceAnalysis(BaseModel):
     score: float
     risk_level: str
-    results: list[ComplianceResultOut]
+    results: List[ComplianceResultOut]
     recommendation: str
 
 class RiskResultOut(BaseModel):
